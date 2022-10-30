@@ -1,0 +1,49 @@
+image:
+  repository: machine424/notebook-on-kube
+  pullPolicy: IfNotPresent
+  # tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Better to set this to one that has no permissions at all
+serviceAccountName: ""
+
+podAnnotations: {}
+
+resources:
+  limits:
+    cpu: 2
+    memory: 1Gi
+  requests:
+    cpu: 50m
+    memory: 128Mi
+
+extraEnv: {}
+  # NOK_KUBE_APISERVER: "https://1.2.3.4"
+  # NOK_KUBE_TLS_SERVER_NAME: "1.2.3.4"
+
+  # NOK_KUBE_CLUSTER_NAME: ""
+  # NOK_TEST_MODE: ""
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Override the default values.yaml of the jupyter-notebook Chart.
+notebookDefaultValues: {}
+
+ingress-nginx:
+  controller:
+    scope:
+      enabled: true
+    service:
+      type: ClusterIP
+    ingressClassResource:
+      enabled: true
+      default: false
+      name: notebook-on-kube
+      controllerValue: "k8s.io/notebook-on-kube-ingress-nginx"
+    ingressClass: notebook-on-kube

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>New Notebook</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="px-3 pt-3">
+    <h2>Create a new Notebook in the <strong>{{ notebook_config.notebooks_namespace }}</strong> namespace :</h2>
+    <form action="/api/create_notebook/" id="new_notebook_form" method="POST">
+      <div class="input-group mb-3">
+        <label for="new_notebook_form" class="col-sm-2 col-form-label">Notebook name: </label>
+        <span class="input-group-text" id="basic-addon1">nok-{{ username }}-</span>
+        <input type="text" id="notebook_name" name="notebook_name" autocomplete="off" required="required" class="form-control">
+      </div>
+      <div class="input-group mb-3">
+        <label for="new_notebook_form" class="col-sm-2 col-form-label">Helm values: </label>
+        <textarea name="helm_values" id="helm_values" class="form-control" form="new_notebook_form" rows="15">
+{{ notebook_config.helm_values }}
+        </textarea>
+      </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+  </body>
+</html>
