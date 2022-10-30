@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "notebook-on-kube"
-version = "0.0.1"
-description = "xxx"
+version = "0.0.55"
+description = "A tool to deploy Notebooks on Kubernetes."
 readme = "README.md"
 authors = [
   { name="machine424", email="ayoubmrini424@gmail.com" },
@@ -17,14 +17,30 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "pyjwt",
-    "jinja2"
+    "jinja2",
+    "ruamel.yaml"
 ]
 
 [project.scripts]
-notebook-on-kube = "notebook_on_kube.main:main"
+notebook-on-kube = "notebook_on_kube.main:run"
 
 [project.optional-dependencies]
-dev = ["black", "isort"]
+test = ["black", "isort", "flake8", "mypy", "pytest", "pytest-mock", "requests"]
 
 [project.urls]
-"Homepage" = "xxx"
+"Homepage" = "https://github.com/machine424/notebook-on-kube"
+
+[tool.isort]
+profile = "black"
+
+[tool.black]
+line-length = 120
+
+[tool.mypy]
+python_version = "3.10"
+exclude = "tests"
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unused_configs = true
+no_implicit_optional = true
+show_error_codes = true

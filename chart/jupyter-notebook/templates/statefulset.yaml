@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "jupyter-notebook.fullname" . }}
+  labels:
+    {{- include "jupyter-notebook.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "jupyter-notebook.fullname" . }}-headless
+  selector:
+    matchLabels:
+      {{- include "jupyter-notebook.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "jupyter-notebook.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        # jovyan's
+        fsGroup: 100
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+            {{- range $key, $value := .Values.extraEnv }}
+            - name: {{ $key }}
+              value: {{ $value }}
+            {{- end }}
+          {{- if .Values.extraSecretEnv }}
+          envFrom:
+            - secretRef:
+                name: {{ include "jupyter-notebook.fullname" . }}
+          {{- end }}
+          args:
+          {{- if .Values.args }}
+            {{ toYaml .Values.args | indent 12 }}
+          {{- else }}
+            - "start-notebook.sh"
+            - "--NotebookApp.base_url"
+            - /connect_notebook/{{ include "jupyter-notebook.fullname" . }}
+            - "--NotebookApp.token"
+            - {{ include "jupyter-notebook.fullname" . }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8888
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+{{- if .Values.persistence.enabled }}
+          volumeMounts:
+            - name: data
+              mountPath: {{ .Values.persistence.mountPath | default "/home/jovyan" | quote }}
+{{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | default "1Gi" | quote }}
+{{- end }}

@@ -36,9 +36,6 @@ Common labels
 {{- define "notebook-on-kube.labels" -}}
 helm.sh/chart: {{ include "notebook-on-kube.chart" . }}
 {{ include "notebook-on-kube.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 

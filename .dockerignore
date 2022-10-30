@@ -1,0 +1,9 @@
+bin
+lib
+other
+.*
+*.md
+Dockerfile
+deploy/
+tests/
+artwork/

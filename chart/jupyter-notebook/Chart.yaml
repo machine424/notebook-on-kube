@@ -3,4 +3,3 @@ name: jupyter-notebook
 description: A Helm chart to deploy a jupyter Notebook.
 type: application
 version: 0.1.0
-# appVersion: "X.Y.Z"

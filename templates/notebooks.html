@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Notebooks</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="px-3 pt-3">
+    <h3>Hello {{ username }}!</h3>
+    <h4>
+    {% if notebook_status.kube_cluster_name is none %}
+    Your Notebooks in the <strong>{{ notebook_status.notebooks_namespace }}</strong> namespace:
+    {% else %}
+    Your Notebooks on the <strong>{{ notebook_status.kube_cluster_name }}</strong> Kubernetes cluster in the <strong>{{ notebook_status.notebooks_namespace }}</strong> namespace:
+    {% endif %}
+    </h4>
+    <div class="table-responsive">
+      <table id="notebooks_table" class="table">
+        <thead>
+          <tr>
+            <th scope="col">Status</th>
+            <th scope="col">Name</th>
+            <th scope="col">Start Time</th>
+            <th scope="col">Image</th>
+            <th scope="col">Connect <div class="form-text">Notebook's name as token.</div></th>
+            <th scope="col">Events</th>
+            <th scope="col">Pause/Resume</th>
+            <th scope="col">Delete <div class="form-text">PVC not deleted.</div></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for notebook in notebook_status.notebooks %}
+            <tr>
+              <td>{{ notebook.status }}</td>
+              <td>{{ notebook.name }}</td>
+              <td>{{ notebook.start_time }}</td>
+              <td>{{ notebook.image }}</td>
+              <td><a target="_blank" rel="noopener noreferrer" href="/connect_notebook/{{ notebook.name }}" class="btn btn-success" role="button">Connect</a></td>
+              <td>
+                <button onclick="location.href='/api/notebook_events/{{ notebook.name }}'" class="btn btn-primary">
+                  Events
+                </button>
+              </td>
+              {% if notebook.status == notebook_status.not_running %}
+              {% set scale, verb = '1', 'Resume' %}
+              {% else %}
+              {% set scale, verb = '0', 'Pause' %}
+              {% endif %}
+              <td>
+                <button onclick="location.href='/api/scale_notebook/{{ notebook.name }}?scale={{ scale }}'" class="btn btn-warning">
+                  {{ verb }}
+                </button>
+              </td>
+              <td>
+              <form action="/api/delete_notebook/{{ notebook.name }}" method="POST">
+                  <button class="btn btn-danger">Delete</button>
+              </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <button onclick="location.href='/api/new_notebook/'" class="btn btn-primary">New Notebook</button>
+    </div>
+  </body>
+</html>

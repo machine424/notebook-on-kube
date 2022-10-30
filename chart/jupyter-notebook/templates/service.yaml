@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "jupyter-notebook.fullname" . }}
+  labels:
+    {{- include "jupyter-notebook.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "jupyter-notebook.selectorLabels" . | nindent 4 }}
+
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ include "jupyter-notebook.fullname" . }}-headless
+  labels:
+    {{- include "jupyter-notebook.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  ports:
+    - port: 80
+      name: http
+  selector:
+    {{- include "jupyter-notebook.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,30 @@
+image:
+  repository: jupyter/datascience-notebook
+  pullPolicy: IfNotPresent
+  tag: "notebook-6.5.1"
+
+podAnnotations: {}
+
+args: []
+
+resources:
+  requests:
+    cpu: "1"
+    memory: "1Gi"
+  limits:
+    cpu: "1"
+    memory: "1Gi"
+
+extraEnv: {}
+extraSecretEnv: {}
+
+persistence:
+  enabled: true
+  # size: ""
+  # mountPath: ""
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
