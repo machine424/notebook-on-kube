@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "notebook-on-kube"
+version = "0.0.1"
+description = "xxx"
+readme = "README.md"
+authors = [
+  { name="machine424", email="ayoubmrini424@gmail.com" },
+]
+requires-python = ">=3.10"
+
+dependencies = [
+    "python-multipart",
+    "fastapi",
+    "uvicorn",
+    "pyjwt",
+    "jinja2"
+]
+
+[project.scripts]
+notebook-on-kube = "notebook_on_kube.main:main"
+
+[project.optional-dependencies]
+dev = ["black", "isort"]
+
+[project.urls]
+"Homepage" = "xxx"

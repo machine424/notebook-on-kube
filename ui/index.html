@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html> 
+  <title>Login</title>
+  <body>
+    <h1>Create and manage your Notebooks on Kubernetes using Helm.</h1>
+    <p>Why re-implementing authn/authz, we have the Kubernetes API for that. Please provide the Kubernetes token that will be used to contact the Kubernetes API.</p>
+    <form action="http://localhost:8000/login/" id="kube_token_form" method="POST">
+      <label for="kube_token">Kubernetes token:</label>
+      <textarea type="text" name="kube_token" id="kube_token" placeholder="Kubernetes token" form="kube_token_form" cols="50" rows="10"></textarea>
+      <input type="submit" value="Use">
+    </form>
+    <p>Note that if it is valid, the token will be stored in the kube_token Cookie!</p>
+  </body>
+</html>

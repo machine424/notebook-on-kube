@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "notebook-on-kube.fullname" . }}
+  labels:
+    {{- include "notebook-on-kube.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "notebook-on-kube.selectorLabels" . | nindent 4 }}

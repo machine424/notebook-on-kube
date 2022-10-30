@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <title>New Notebook</title>
+  <body>
+    <h1>Create a new Notebook in the namespace <b>{{ notebooks_namespace }}</b></h1>
+    <form action="/create_notebook/" id="new_notebook_form" method="POST">
+      <label for="notebook_name">Notebook name: {{ username }}-</label>
+      <input id="notebook_name" name="notebook_name" autocomplete="off"><br><br>
+      {% if template_to_include is not none %}
+        {% include template_to_include %}
+      {% endif %}
+      <input type="submit" value="Create">
+    </form>
+    <p>We're planning to allow you to customize and edit the values of the Helm release that gets deployed, stay tuned :)</p>
+  </body>
+</html>
