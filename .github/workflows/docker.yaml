@@ -3,7 +3,7 @@ name: Release Image
 on:
   push:
     tags:
-      - 'v*'
+      - 'notebook-on-kube*'
 
 jobs:
   release:
