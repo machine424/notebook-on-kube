@@ -3,7 +3,7 @@ name: Release Image
 on:
   push:
     tags:
-      - 'notebook-on-kube*'
+      - 'notebook-on-kube-*'
 
 jobs:
   release:
@@ -16,6 +16,8 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: machine424/notebook-on-kube
+          tags: |
+            type=match,pattern=notebook-on-kube-(.*),group=1,suffix=v
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
