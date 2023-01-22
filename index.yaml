@@ -2,6 +2,20 @@ apiVersion: v1
 entries:
   notebook-on-kube:
   - apiVersion: v2
+    created: "2023-01-22T18:52:17.367335499Z"
+    dependencies:
+    - name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.3.0
+    description: A Helm chart to deploy notebook-on-kube
+    digest: ecc77f5ce261f48e85c7198331f35738694dce2ec63b1ac19fd70300eed37358
+    home: https://github.com/machine424/notebook-on-kube
+    name: notebook-on-kube
+    type: application
+    urls:
+    - https://github.com/machine424/notebook-on-kube/releases/download/notebook-on-kube-0.2.0/notebook-on-kube-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     created: "2023-01-22T18:46:33.567468506Z"
     dependencies:
     - name: ingress-nginx
@@ -57,4 +71,4 @@ entries:
     urls:
     - https://github.com/machine424/notebook-on-kube/releases/download/notebook-on-kube-0.1.2/notebook-on-kube-0.1.2.tgz
     version: 0.1.2
-generated: "2023-01-22T18:46:33.567486306Z"
+generated: "2023-01-22T18:52:17.367499498Z"
