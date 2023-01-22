@@ -22,8 +22,10 @@ already has [Helm](https://helm.sh) to deploy and manage its resources and provi
 ### Use
 
 ```bash
+# Add repo
+helm repo add notebook-on-kube xxx
 # Deploy
-helm install nok machine424/notebook-on-kube
+helm install nok notebook-on-kube/notebook-on-kube
 # Port-forward
 kubectl port-forward service/nok-ingress-nginx-controller 8080:80
 # Go to

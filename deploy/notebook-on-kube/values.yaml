@@ -22,7 +22,6 @@ resources:
 extraEnv: {}
   # NOK_KUBE_APISERVER: "https://1.2.3.4"
   # NOK_KUBE_TLS_SERVER_NAME: "1.2.3.4"
-
   # NOK_KUBE_CLUSTER_NAME: ""
   # NOK_TEST_MODE: ""
 
