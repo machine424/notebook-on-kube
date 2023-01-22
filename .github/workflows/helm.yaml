@@ -15,8 +15,8 @@ jobs:
           fetch-depth: 0
       - name: Configure Git
         run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config user.name "machine424"
+          git config user.email "ayoubmrini424@gmail.com"
       - name: Install Helm
         uses: azure/setup-helm@v3
         with:
@@ -29,4 +29,4 @@ jobs:
         with:
           charts_dir: deploy
         env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_TOKEN: "${{ secrets.COMMIT_KEY }}"
