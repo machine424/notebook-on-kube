@@ -17,7 +17,7 @@ jobs:
         with:
           images: machine424/notebook-on-kube
           tags: |
-            type=match,pattern=notebook-on-kube-(.*),group=1,suffix=v
+            type=match,pattern=notebook-on-kube-(.*),group=1,prefix=v
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:

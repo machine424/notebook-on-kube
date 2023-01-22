@@ -2,7 +2,7 @@ apiVersion: v2
 name: notebook-on-kube
 description: A Helm chart to deploy notebook-on-kube
 type: application
-version: 0.1.7
+version: 0.2.0
 home: https://github.com/machine424/notebook-on-kube
 dependencies:
   - name: ingress-nginx

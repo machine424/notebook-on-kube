@@ -23,7 +23,7 @@ already has [Helm](https://helm.sh) to deploy and manage its resources and provi
 
 ```bash
 # Add repo
-helm repo add notebook-on-kube xxx
+helm repo add notebook-on-kube https://machine424.github.io/notebook-on-kube
 # Deploy
 helm install nok notebook-on-kube/notebook-on-kube
 # Port-forward
