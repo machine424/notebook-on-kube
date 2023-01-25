@@ -1,0 +1,7 @@
+CHART NAME: {{ .Chart.Name }}
+CHART VERSION: {{ .Chart.Version }}
+
+To connect to notebook-on-kube:
+# Start a port-forward
+kubectl port-forward service/{{ .Release.Name }}-ingress-nginx-controller --namespace {{ .Release.Namespace }} 8080:80
+# Go to localhost:8080 on your browser :)
