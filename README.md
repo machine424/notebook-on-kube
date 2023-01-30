@@ -28,7 +28,15 @@ Currently, if you want to deploy `Jupyter` notebooks on `Kubernetes` using avail
     - `JupyterHub` comes with its own [node-http-proxy](https://github.com/jupyterhub/configurable-http-proxy) for reverse proxying, **but** why not making use of the well-established [Ingress NGINX Controller](https://github.com/kubernetes/ingress-nginx)?
 `notebook-on-kube` deploys an `Ingress NGINX` Controller instance and configures it for each notebook via `Ingress` resources.
 
-`notebook-on-kube` re-uses these features and tools that are already there and are tailored to run applications on `Kubernetes` and provides a third, middle ground, approach to managing notebooks on `Kubernetes`!
+`notebook-on-kube` re-uses these features and tools that are already there and are tailored to run applications on `Kubernetes` and provides a third, middle ground, easy to maintain and well-integrated approach to managing notebooks on `Kubernetes`!
+
+It provides the following features:
+- Authn/authz based on `Kubernetes'`.
+- Customize and create notebooks.
+- Connect to notebooks.
+- Pause/Resume notebooks.
+- Get notebooks' events.
+- See [next steps](#next-steps).
 
 <p align="center">
   <img src="artwork/notebook-on-kube.drawio.png" />
@@ -36,13 +44,15 @@ Currently, if you want to deploy `Jupyter` notebooks on `Kubernetes` using avail
 
 ### How to use?
 
+You need access to a `Kubernetes` cluster with an [OIDC token](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens).
+
 - You can deploy `notebook-on-kube` on a `Kubernetes` cluster using Helm:
 ```bash
 helm repo add notebook-on-kube https://machine424.github.io/notebook-on-kube
 helm install nok notebook-on-kube/notebook-on-kube
 ```
 - Or run the docker image directly from [here](https://hub.docker.com/repository/docker/machine424/notebook-on-kube/general).
-- Or clone the repo and run:.
+- Or clone the repo and run:
 ```bash
 pip install -e .
 notebook-on-kube
