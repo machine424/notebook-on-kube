@@ -278,7 +278,6 @@ class NotebookConfig:
 
 class NotebookStatus:
     class Notebook(BaseModel, extra=Extra.forbid):
-
         missing_statefulset: ClassVar[str] = "StatefulSet Missing"
         not_running: ClassVar[str] = "Not Running"
         error: ClassVar[str] = "Error"

@@ -28,7 +28,10 @@ FAKE_OIDC_TOKEN = (
 )
 FAKE_NOTEBOOK = "my-notebook"
 
-client = TestClient(app)
+
+@pytest.fixture()
+def test_client():
+    return TestClient(app)
 
 
 @pytest.fixture()
@@ -131,30 +134,32 @@ def test_complete_notebook_name_from_form(mocker, notebook_name, username, compl
     assert complete_notebook_name_from_form(notebook_name=notebook_name, username=username) == complete_notebook_name
 
 
-def test_healthz():
-    response = client.get("api/healthz")
+def test_healthz(test_client):
+    response = test_client.get("api/healthz")
     assert response.status_code == 200
     assert response.json()["status"] == "Seems healthy"
 
 
-def test_root():
-    response = client.get("/")
+def test_root(test_client):
+    response = test_client.get("/")
     assert response.status_code == 200
     assert response.template.name == "index.html"
     assert response.context["kube_cluster_name"] is None
 
 
-def test_login(validate_kube_token_mock):
-    response = client.post("api/login/", data={"kube_token": FAKE_OIDC_TOKEN}, allow_redirects=False)
+def test_login(validate_kube_token_mock, test_client):
+    response = test_client.post("api/login/", data={"kube_token": FAKE_OIDC_TOKEN}, follow_redirects=False)
     assert response.status_code == 303
     assert response.headers["location"] == "/api/notebooks/"
-    # We do not send the cookie when connecting to Notebooks (non /api)
-    assert response.cookies.get_dict(path="/api")["kube_token"] == FAKE_OIDC_TOKEN
+    # Assert we only set the cookie on /api)
+    assert len(response.cookies) == 1
+    assert response.cookies.get(name="kube_token", path="/api") == FAKE_OIDC_TOKEN
 
 
 def test_notebooks(mocker, validate_kube_token_mock):
     helm = mocker.patch("notebook_on_kube.main.helm", return_value="{}")
-    response = client.get("api/notebooks/", cookies={"kube_token": FAKE_OIDC_TOKEN})
+    client = TestClient(app=app, cookies={"kube_token": FAKE_OIDC_TOKEN})
+    response = client.get("api/notebooks/")
     helm.assert_called_once_with(
         body=["list", "--filter", f"^nok-{FAKE_USERNAME}-.+$", "--all", "--output", "json"], kube_token=FAKE_OIDC_TOKEN
     )
@@ -177,9 +182,8 @@ def test_delete_notebook(mocker, validate_kube_token_mock, existing, helm_list_o
     helm_list_call = mocker.call(
         body=["list", "--filter", f"^{FAKE_NOTEBOOK}$", "--all", "--output", "json"], kube_token=FAKE_OIDC_TOKEN
     )
-    response = client.post(
-        f"api/delete_notebook/{FAKE_NOTEBOOK}", cookies={"kube_token": FAKE_OIDC_TOKEN}, allow_redirects=False
-    )
+    client = TestClient(app=app, cookies={"kube_token": FAKE_OIDC_TOKEN})
+    response = client.post(f"api/delete_notebook/{FAKE_NOTEBOOK}", follow_redirects=False)
     assert response.status_code == status_code
     if existing:
         assert response.headers["location"] == "/api/notebooks/"
@@ -195,7 +199,8 @@ def test_delete_notebook(mocker, validate_kube_token_mock, existing, helm_list_o
 def test_notebook_events(mocker, validate_kube_token_mock, event):
     mocker.patch("notebook_on_kube.main.notebook_exists", return_value=True)
     kubectl = mocker.patch("notebook_on_kube.main.kubectl", return_value=event)
-    response = client.get(f"api/notebook_events/{FAKE_NOTEBOOK}", cookies={"kube_token": FAKE_OIDC_TOKEN})
+    client = TestClient(app=app, cookies={"kube_token": FAKE_OIDC_TOKEN})
+    response = client.get(f"api/notebook_events/{FAKE_NOTEBOOK}")
     assert response.status_code == 200
     assert (
         response.text
@@ -224,10 +229,10 @@ def test_notebook_events(mocker, validate_kube_token_mock, event):
 def test_scale_notebook(mocker, validate_kube_token_mock, scale):
     mocker.patch("notebook_on_kube.main.notebook_exists", return_value=True)
     kubectl = mocker.patch("notebook_on_kube.main.kubectl")
+    client = TestClient(app=app, cookies={"kube_token": FAKE_OIDC_TOKEN})
     response = client.get(
         f"api/scale_notebook/{FAKE_NOTEBOOK}?scale={scale}",
-        cookies={"kube_token": FAKE_OIDC_TOKEN},
-        allow_redirects=False,
+        follow_redirects=False,
     )
     assert response.status_code == 303
     assert response.headers["location"] == "/api/notebooks/"
@@ -245,9 +250,9 @@ def test_scale_notebook(mocker, validate_kube_token_mock, scale):
 
 
 def test_new_notebook(validate_kube_token_mock):
+    client = TestClient(app=app, cookies={"kube_token": FAKE_OIDC_TOKEN})
     response = client.get(
         "api/new_notebook/",
-        cookies={"kube_token": FAKE_OIDC_TOKEN},
     )
     assert response.status_code == 200
     assert response.template.name == "new_notebook.html"
@@ -270,14 +275,20 @@ def test_create_notebook(mocker, validate_kube_token_mock, existing, helm_values
     yaml_load = mocker.spy(yaml, "load")
     yaml_dump = mocker.spy(yaml, "dump")
 
+    client = TestClient(app=app, cookies={"kube_token": FAKE_OIDC_TOKEN})
     response = client.post(
         "api/create_notebook/",
-        cookies={"kube_token": FAKE_OIDC_TOKEN},
         data={"notebook_name": FAKE_NOTEBOOK, "helm_values": helm_values},
-        allow_redirects=False,
+        follow_redirects=False,
     )
     assert response.status_code == status_code
-    if not existing:
+    if existing:
+        assert (
+            response.json()["detail"]
+            == f"The Notebook notebook_name='nok-{FAKE_USERNAME}-{FAKE_NOTEBOOK}' already exists."
+        )
+        assert helm.call_count == 0
+    else:
         assert response.headers["location"] == "/api/notebooks/"
         # helm_values content was retrieved
         yaml_load.assert_called_once_with(helm_values)
@@ -296,9 +307,3 @@ def test_create_notebook(mocker, validate_kube_token_mock, existing, helm_values
             ],
             kube_token=FAKE_OIDC_TOKEN,
         )
-    else:
-        assert (
-            response.json()["detail"]
-            == f"The Notebook notebook_name='nok-{FAKE_USERNAME}-{FAKE_NOTEBOOK}' already exists."
-        )
-        assert helm.call_count == 0
