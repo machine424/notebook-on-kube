@@ -8,27 +8,9 @@ Create and manage your `Jupyter` notebooks on `Kubernetes` **without** `JupyterH
 
 ### How and why?
 
-Currently, if you want to deploy `Jupyter` notebooks on `Kubernetes` using available open-source tools, you need to choose between two major approaches:
+You can check out this [post](http://ouba.online/blog/2023/3/8/you_probably_dont_need_jupyterhub_on_kubernetes/post.html).
 
-- One that re-implements the notebooks management logic the `Kubernetes` way, it:
-  - integrates well with `Kubernetes` ecosystem: using [Operators](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) and [CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/).
-  - is usually part of a bigger toolkit ([Kubeflow](https://www.kubeflow.org) e.g.).
-  - comes with more features than one may need.
-  - are complicated and add a lot of maintenance burden even for people who are familiar with `Kubernetes`.
-
-    
-- The other that re-uses already existing notebooks management code (mainly [JupyterHub](https://jupyter.org/hub)) and tries to integrate it with `Kubernetes`, it:
-  - doesn't reinvent the wheel: people who are familiar with managing notebooks outside/before Kubernetes don't feel unaccustomed.
-  - comes with more features than one may need, `notebook-on-kube` itself will be kept as simple as possible (a straightforward [FastAPI](https://github.com/tiangolo/fastapi) application.)
-  - relies on "hacky" code to import and connect these legacy tools to `Kubernetes` and introduce feature redundancy:
-    - `JupyterHub` relies on [kubespawner](https://github.com/jupyterhub/kubespawner) to spawn `Kubernetes` resources (Pods, PVC etc.) representing a notebook. **But** why adding another
-`Kubernetes` client when we already use [Helm](https://github.com/helm/helm)? `notebook-on-kube` uses `Helm` to manage the notebooks (see [here](#create-connect-to-and-delete-a-notebook)).
-    - `JupyterHub` adds its own auth layer, **but** why not using Kubernetes [authn](https://kubernetes.io/docs/reference/access-authn-authz/authentication/)/[authz](https://kubernetes.io/docs/reference/access-authn-authz/authorization/)
-(user management) features? `notebook-on-kube` uses the same `Kubernetes` [OpenID Connect](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens) token on behalf of the user to manage their notebooks: Reuse `Kubernetes` access levels and be more transparent.
-    - `JupyterHub` comes with its own [node-http-proxy](https://github.com/jupyterhub/configurable-http-proxy) for reverse proxying, **but** why not making use of the well-established [Ingress NGINX Controller](https://github.com/kubernetes/ingress-nginx)?
-`notebook-on-kube` deploys an `Ingress NGINX` Controller instance and configures it for each notebook via `Ingress` resources.
-
-`notebook-on-kube` re-uses these features and tools that are already there and are tailored to run applications on `Kubernetes` and provides a third, middle ground, easy to maintain and well-integrated approach to managing notebooks on `Kubernetes`!
+`notebook-on-kube` provides the following features:
 
 It provides the following features:
 - Authn/authz based on `Kubernetes'`.
