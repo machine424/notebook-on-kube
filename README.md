@@ -12,7 +12,6 @@ You can check out this [post](http://ouba.online/blog/2023/3/8/you_probably_dont
 
 `notebook-on-kube` provides the following features:
 
-It provides the following features:
 - Authn/authz based on `Kubernetes'`.
 - Customize and create notebooks.
 - Connect to notebooks.
